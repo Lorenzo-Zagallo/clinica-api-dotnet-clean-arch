@@ -48,7 +48,7 @@ O projeto conta com uma suíte de testes unitários para validar as regras de ne
 ### Passo a Passo
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/clinica-api-dotnet-clean-arch.git
+   git clone https://github.com/Lorenzo-Zagallo/clinica-api-dotnet-clean-arch
     ```
 
 2.  Configure a string de conexão no `appsettings.json` (se necessário).
