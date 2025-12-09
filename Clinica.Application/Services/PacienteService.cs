@@ -16,6 +16,11 @@ public class PacienteService : IPacienteService
 
     public async Task<Paciente> CadastrarPacienteAsync(CriarPacienteDTO dto)
     {
+        if (dto.ValorConsulta < 0)
+        {
+            throw new Exception("Valor da consulta não pode ser negativo");
+        }
+        
         // Aqui transformamos o DTO (dados da tela) em Entidade (dados do banco)
         var paciente = new Paciente
         {
