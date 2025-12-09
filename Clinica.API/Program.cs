@@ -13,9 +13,8 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-// builder.Services.AddOpenApi();
+// Adição dos serviços no container
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddDbContext<ClinicaDbContext>(options => 
@@ -83,12 +82,23 @@ builder.Services.AddSwaggerGen(swag =>
 
 // (Resto do código: build, services containers)
 
+// O Backend precisa dizer: "Eu aceito conversas vindas da porta 4200". Isso se chama CORS.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirAngular",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200") // A porta do Front end
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build(); // Cria o app com as configurações feitas acima 
 
 // 1. CONFIGURAÇÕES de Ambiente/Swagger
 if (app.Environment.IsDevelopment())
 {
-    // app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -99,6 +109,9 @@ app.UseHttpsRedirection(); // Middleware que força redirecionamento HTTP -> HTT
 // 2. ROUTING - Diz ao app para usar Controllers (API REST)
 app.UseRouting();
 
+// Agora ative o CORS antes do UseAuthentication
+app.UseCors("PermitirAngular");
+
 // 3. ATENÇÃO: A ORDEM AQUI IMPORTA MUITO!
 app.UseAuthentication(); // <--- OBRIGATÓRIO: "Quem é você?"
 // 3.1 AUTORIZAÇÃO - Diz ao app para usar Autorização e depende do ROUTING
@@ -108,28 +121,4 @@ app.UseAuthorization(); // <--- OBRIGATÓRIO: "O que você pode fazer?"
 // 4. MAPPING/EXECUÇÃO - Mapeia as rotas dos Controllers (API REST) - depende do ROUTING e da AUTORIZAÇÃO
 app.MapControllers(); // Mapeia os endpoints dos Controllers (API REST)
 
-/* var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-}; */
-
-/* app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast"); */
-
 app.Run(); // Inicia o app e começa a ouvir requisições HTTP na porta configurada (ex: 5001 para HTTPS)
-
-/* record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-} */
