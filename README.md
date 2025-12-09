@@ -3,9 +3,10 @@
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat&logo=dotnet)](https://dotnet.microsoft.com/)
 [![EF Core](https://img.shields.io/badge/EF%20Core-Code%20First-blue)](https://docs.microsoft.com/ef/core/)
+[![Tests](https://img.shields.io/badge/Tests-xUnit-success)](https://xunit.net/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-API RESTful moderna desenvolvida para gerenciamento de pacientes e autenticação de usuários, demonstrando a aplicação prática de princípios de **Arquitetura Limpa (Clean Architecture)** e **SOLID**.
+API RESTful moderna para gestão clínica desenvolvida com **.NET 10 (LTS)**, demonstrando a aplicação prática de **Clean Architecture**, **SOLID** e **Testes Automatizados**.
 
 O projeto moderniza um sistema legado (Web Forms), migrando para a estrutura mais recente, escalável, testável e performática do ecossistema Microsoft.
 
@@ -14,8 +15,9 @@ O projeto moderniza um sistema legado (Web Forms), migrando para a estrutura mai
 - **.NET 10 SDK**: Utilizando a versão mais recente e performática da plataforma (LTS).
 - **Clean Architecture**: Separação clara de responsabilidades (Domain, Application, Infrastructure, API).
 - **Entity Framework Core**: ORM para manipulação de dados com abordagem *Code-First*.
-- **SQL Server**: Banco de dados relacional robusto.
+- **xUnit & Moq**: Testes unitários e mocks para garantia de qualidade.
 - **JWT (JSON Web Token)**: Autenticação e segurança de endpoints via Bearer Token.
+- **SQL Server**: Banco de dados relacional robusto.
 - **Swagger UI**: Documentação interativa e testes de API.
 - **Injeção de Dependência**: Desacoplamento de componentes nativo do .NET.
 
@@ -27,6 +29,15 @@ A solução foi dividida em camadas para garantir a manutenção e testabilidade
 2.  **Application**: Casos de uso e regras de negócio. Contém os DTOs (`LoginDTO`, `CriarPacienteDTO`), Interfaces de Serviços e Implementações (`PacienteService`).
 3.  **Infrastructure**: Implementação técnica. Contexto do Banco de Dados (`DbContext`), Migrations e Repositórios concretos (`PacienteRepository`).
 4.  **API**: A porta de entrada. Controllers RESTful, Configuração de JWT e Injeção de Dependência (`Program.cs`).
+5.  **Tests**: Projeto dedicado a testes unitários automatizados.
+
+## 🧪 Testes e Qualidade
+
+O projeto conta com uma suíte de testes unitários para validar as regras de negócio críticas.
+
+**Tecnologias de Teste:**
+* **xUnit**: Framework de testes.
+* **Moq**: Biblioteca para simular dependências (ex: Repositórios) e testar a lógica isoladamente.
 
 ## ⚙️ Como Executar
 
@@ -58,7 +69,7 @@ A solução foi dividida em camadas para garantir a manutenção e testabilidade
 
 ## 🔒 Autenticação
 
-O sistema possui endpoints protegidos. Para testar:
+Para acessar rotas protegidas (ex: gestão de pacientes):
 
 1.  Crie um usuário na rota `POST /api/auth/registrar`.
 2.  Faça login em `POST /api/auth/login` para receber o **Token JWT**.
