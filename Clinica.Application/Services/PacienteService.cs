@@ -64,4 +64,20 @@ public class PacienteService : IPacienteService
         await _pacienteRepository.DeletarAsync(pacienteExistente);
         return true;
     }
+
+    public async Task<DashboardDTO> ObterDadosDashboardAsync()
+    {
+        var total = await _pacienteRepository.ContarTotalAsync();
+        var faturamento = await _pacienteRepository.SomarValorTotalAsync();
+
+        // Evitar divisão por zero
+        var media = total > 0 ? faturamento / total : 0;
+
+        return new DashboardDTO
+        {
+            TotalPacientes = total,
+            FaturamentoTotal = faturamento,
+            MediaValorConsulta = Math.Round(media, 2)
+        };
+    }
 }

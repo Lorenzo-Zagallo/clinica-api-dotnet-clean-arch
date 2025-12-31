@@ -10,4 +10,7 @@ public interface IPacienteRepository
     Task<Paciente?> ObterPorIdAsync(int pacienteId);
     Task AtualizarAsync(Paciente paciente);
     Task DeletarAsync(Paciente paciente);
+
+    Task<int> ContarTotalAsync();
+    Task<decimal> SomarValorTotalAsync();
 }

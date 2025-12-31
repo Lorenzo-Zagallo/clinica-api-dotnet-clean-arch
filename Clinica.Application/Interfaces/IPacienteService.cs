@@ -9,4 +9,6 @@ public interface IPacienteService
     Task<List<Paciente>> ListarPacientesAsync();
     Task<bool> AtualizarPacienteAsync(int pacienteId, CriarPacienteDTO dto);
     Task<bool> DeletarPacienteAsync(int pacienteId);
+
+    Task<DashboardDTO> ObterDadosDashboardAsync();
 }

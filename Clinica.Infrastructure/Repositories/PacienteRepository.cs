@@ -43,4 +43,17 @@ public class PacienteRepository : IPacienteRepository
         _context.Pacientes.Remove(paciente); // Marca a entidade para remoção no EF
         await _context.SaveChangesAsync(); // O EF gera o DELETE automaticamente aqui
     }
+
+    public async Task<int> ContarTotalAsync()
+    {
+        return await _context.Pacientes.CountAsync();
+    }
+
+    public async Task<decimal> SomarValorTotalAsync()
+    {
+        // Se não tiver ninguém, retorna 0 (evita erro de nulo)
+        if (!await _context.Pacientes.AnyAsync()) return 0;
+
+        return await _context.Pacientes.SumAsync(p => p.ValorConsulta);
+    }
 }

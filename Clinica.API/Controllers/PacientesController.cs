@@ -60,4 +60,12 @@ public class PacientesController : ControllerBase
 
         return NoContent(); // Retorna 204 se a deleção foi bem-sucedida
     }
+
+    // GET: api/pacientes/dashboard
+    [HttpGet("dashboard")]
+    public async Task<IActionResult> GetDashboard()
+    {
+        var dados = await _pacienteService.ObterDadosDashboardAsync();
+        return Ok(dados);
+    }
 }
