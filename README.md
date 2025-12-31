@@ -31,6 +31,10 @@ A solução foi dividida em camadas para garantir a manutenção e testabilidade
 4.  **API**: A porta de entrada. Controllers RESTful, Configuração de JWT e Injeção de Dependência (`Program.cs`).
 5.  **Tests**: Projeto dedicado a testes unitários automatizados.
 
+## Features
+
+- **Dashboard Analytics**: Endpoint otimizado com LINQ e Entity Framework para realizar agregações (Soma, Contagem, Média) diretamente no banco de dados, retornando DTOs leves para performance.
+
 ## 🧪 Testes e Qualidade
 
 O projeto conta com uma suíte de testes unitários para validar as regras de negócio críticas.
