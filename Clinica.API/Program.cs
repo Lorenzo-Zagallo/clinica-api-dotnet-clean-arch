@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddDbContext<ClinicaDbContext>(options => 
+builder.Services.AddDbContext<ClinicaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Vida útil "Scoped": cria uma instância nova a cada requisição HTTP
@@ -96,12 +96,63 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build(); // Cria o app com as configurações feitas acima 
 
-// 1. CONFIGURAÇÕES de Ambiente/Swagger
-if (app.Environment.IsDevelopment())
+// --- BLOCO DE MIGRAÇÃO COM RETRY ---
+using (var scope = app.Services.CreateScope())
 {
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    var context = services.GetRequiredService<ClinicaDbContext>();
+
+    try
+    {
+        // Tenta conectar 10 vezes (esperando 3 segundos entre cada tentativa)
+        // Isso dá 30 segundos para o SQL Server acordar
+        var retryCount = 10;
+        var currentRetry = 0;
+
+        while (currentRetry < retryCount)
+        {
+            currentRetry++;
+            logger.LogInformation($"Tentativa {currentRetry} de {retryCount}: Tentando criar/conectar ao banco...");
+
+            try
+            {
+                // MUDANÇA AQUI:
+                // Removemos o "CanConnect". 
+                // O Migrate() tenta conectar. Se o banco não existir, ele CRIA o banco ClinicaDB sozinho.
+                // Se o servidor estiver offline, ele gera exceção e cai no catch abaixo.
+                context.Database.Migrate();
+
+                logger.LogInformation("✅ Sucesso! Banco ClinicaDB criado e migrações aplicadas!");
+                break; // Sai do loop
+            }
+            catch (Exception ex)
+            {
+                // Se o SQL Server ainda estiver subindo, vai dar erro de conexão.
+                // Se o banco não existir, o Migrate resolveria, então o erro aqui é de conexão mesmo.
+                logger.LogWarning($"⚠️ Ainda não foi possível conectar: {ex.Message}");
+
+                if (currentRetry < retryCount)
+                {
+                    logger.LogInformation("⏳ Aguardando 5 segundos...");
+                    System.Threading.Thread.Sleep(5000);
+                }
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Erro crítico ao criar o banco de dados.");
+    }
+}
+// --------------------------------------------------
+
+// 1. CONFIGURAÇÕES de Ambiente/Swagger
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
 
 // Garante o redirecionamento (se configurado)
 app.UseHttpsRedirection(); // Middleware que força redirecionamento HTTP -> HTTPS (mais seguro)

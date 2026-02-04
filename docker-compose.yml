@@ -1,0 +1,42 @@
+services:
+    # Serviço 1: Banco de Dados SQL Server
+    sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        container_name: clinica-db
+        environment:
+            - ACCEPT_EULA=Y
+            - MSSQL_SA_PASSWORD=Kaxoxa_123! # Senha do Admin do Banco
+        ports:
+            - "1434:1433" # Porta do SQL Server
+        volumes:
+            - sqlvolume_novo:/var/opt/mssql # Persistência de dados (para não perder ao reiniciar)
+
+    # Serviço 2: API Backend (.NET 10)
+    backend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: clinica-api
+        depends_on:
+            - sqlserver # Só inicia depois que o banco subir
+        environment:
+            # AQUI ESTÁ O TRUQUE:
+            # Sobrescrevemos a ConnectionString para apontar para o container 'sqlserver'
+            # e usamos a senha definida acima.
+            - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ClinicaDB;User Id=sa;Password=Kaxoxa_123!;TrustServerCertificate=True;
+        ports:
+            - "5137:8080" # Mapeia a porta interna 8080 para a sua 5137 (assim o front não se perde)
+
+    # Serviço 3: Frontend (Angular + Nginx)
+    frontend:
+        build:
+            context: ../clinica-frontend
+            dockerfile: Dockerfile
+        container_name: clinica-web
+        depends_on:
+            - backend # Só inicia depois da API
+        ports:
+            - "4200:80" # Mapeia a porta 80 do Nginx para a 4200 do seu navegador
+
+volumes:
+    sqlvolume_novo:
