@@ -22,7 +22,7 @@ public class PacientesController : ControllerBase
 
     // POST: api/pacientes
     [HttpPost]
-    public async Task<IActionResult> CadastrarPaciente([FromBody] CriarPacienteDTO dto)
+    public async Task<IActionResult> CadastrarPaciente([FromBody] CreatePacienteDTO dto)
     {
         // Se o JSON vier vazio ou errado, o [ApiController] já valida automaticamente
         var pacienteCriado = await _pacienteService.CadastrarPacienteAsync(dto);
@@ -41,7 +41,7 @@ public class PacientesController : ControllerBase
 
     // PUT: api/pacientes/{pacienteId}
     [HttpPut("{pacienteId}")]
-    public async Task<IActionResult> AtualizarPaciente(int pacienteId, [FromBody] CriarPacienteDTO dto)
+    public async Task<IActionResult> AtualizarPaciente(int pacienteId, [FromBody] CreatePacienteDTO dto)
     {
         var sucesso = await _pacienteService.AtualizarPacienteAsync(pacienteId, dto);
 

@@ -12,6 +12,7 @@ public class ClinicaDbContext : DbContext
     // O nome da propriedade ("Pacientes") será o nome da tabela no SQL
     public DbSet<Paciente> Pacientes { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Consulta> Consultas { get; set; }
 
     // Configurações detalhadas (Fluent API)
     protected override void OnModelCreating(ModelBuilder modelBuilder)

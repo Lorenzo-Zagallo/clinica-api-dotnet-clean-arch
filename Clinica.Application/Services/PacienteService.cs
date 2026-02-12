@@ -14,7 +14,7 @@ public class PacienteService : IPacienteService
         _pacienteRepository = pacienteRepository;
     }
 
-    public async Task<Paciente> CadastrarPacienteAsync(CriarPacienteDTO dto)
+    public async Task<Paciente> CadastrarPacienteAsync(CreatePacienteDTO dto)
     {
         if (dto.ValorConsulta < 0)
         {
@@ -40,7 +40,7 @@ public class PacienteService : IPacienteService
         return await _pacienteRepository.ObterTodosAsync();
     }
 
-    public async Task<bool> AtualizarPacienteAsync(int pacienteId, CriarPacienteDTO dto)
+    public async Task<bool> AtualizarPacienteAsync(int pacienteId, CreatePacienteDTO dto)
     {
         var pacienteExistente = await _pacienteRepository.ObterPorIdAsync(pacienteId);
         
