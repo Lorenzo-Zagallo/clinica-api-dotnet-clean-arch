@@ -25,6 +25,8 @@ builder.Services.AddDbContext<ClinicaDbContext>(options =>
 builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
 builder.Services.AddScoped<IPacienteService, PacienteService>();
 
+builder.Services.AddScoped<IConsultaRepository, ConsultaRepository>();
+
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<TokenService>();
 

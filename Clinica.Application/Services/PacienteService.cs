@@ -8,10 +8,12 @@ namespace Clinica.Application.Services;
 public class PacienteService : IPacienteService
 {
     private readonly IPacienteRepository _pacienteRepository;
+    private readonly IConsultaRepository _consultaRepository;
 
-    public PacienteService(IPacienteRepository pacienteRepository)
+    public PacienteService(IPacienteRepository pacienteRepository, IConsultaRepository consultaRepository)
     {
         _pacienteRepository = pacienteRepository;
+        _consultaRepository = consultaRepository;
     }
 
     public async Task<Paciente> CadastrarPacienteAsync(CreatePacienteDTO dto)
@@ -68,16 +70,21 @@ public class PacienteService : IPacienteService
     public async Task<DashboardDTO> ObterDadosDashboardAsync()
     {
         var total = await _pacienteRepository.ContarTotalAsync();
-        var faturamento = await _pacienteRepository.SomarValorTotalAsync();
+        // var faturamento = await _pacienteRepository.SomarValorTotalAsync();
+
+        var faturamentoTotal = await _consultaRepository.FaturamentoTotal();
+        var totalConsultas = await _consultaRepository.TotalConsultas();
+
+        var ticketMedio = totalConsultas > 0 ? faturamentoTotal / totalConsultas : 0;
 
         // Evitar divisão por zero
-        var media = total > 0 ? faturamento / total : 0;
+        // var media = total > 0 ? faturamento / total : 0;
 
         return new DashboardDTO
         {
             TotalPacientes = total,
-            FaturamentoTotal = faturamento,
-            MediaValorConsulta = Math.Round(media, 2)
+            FaturamentoTotal = faturamentoTotal,
+            MediaValorConsulta = Math.Round(ticketMedio, 2)
         };
     }
 }
